@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kura Sitesi</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <style>
+        .item {
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+
+        .item:hover {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kura Sitesi</h1>
+        <div id="wheel"></div>
+        <div class="input-container">
+            <input type="text" id="itemInput" placeholder="Öğeleri girin">
+            <button id="addItemButton">Öğeyi Ekle</button>
+            <button id="clearItems">Öğeleri Temizle</button>
+            <button id="spinButton">Kura Çek!</button>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="removeOnSpin">
+                <label class="form-check-label" for="removeOnSpin">Çekileni Sil</label>
+            </div>
+
+        </div>
+        <div id="result"></div>
+    </div>
+    <script>
+        var items = [];
+        var itemInput = document.getElementById('itemInput');
+
+        itemInput.addEventListener('keydown', function(event) {
+            if (event.keyCode === 13) { // Enter tuşunun kodu 13'tür
+                event.preventDefault(); // Varsayılan Enter davranışını engelle
+                var newItem = itemInput.value.trim(); // Baştaki ve sondaki boşlukları kaldır
+                if (newItem !== "") {
+                    items.push({ name: newItem, count: 0 });
+                    itemInput.value = "";
+                    displayItems();
+                }
+            }
+        });
+
+        var addItemButton = document.getElementById('addItemButton');
+        var wheel = document.getElementById('wheel');
+        var spinButton = document.getElementById('spinButton');
+        var resultDiv = document.getElementById('result');
+        var clearButton = document.getElementById('clearItems'); // Öğeleri Temizle butonu
+
+        addItemButton.addEventListener('click', function() {
+            var newItem = itemInput.value.trim(); // Baştaki ve sondaki boşlukları kaldır
+            if (newItem !== "") {
+                items.push({ name: newItem, count: 0 });
+                itemInput.value = "";
+                displayItems();
+            }
+        });
+
+        clearButton.addEventListener('click', function() {
+            items = [];
+            displayItems();
+        });
+
+        function displayItems() {
+            wheel.innerHTML = "";
+            var totalOccurrences = 0;
+            for (var i = 0; i < items.length; i++) {
+                totalOccurrences += items[i].count;
+            }
+            for (var i = 0; i < items.length; i++) {
+                var item = document.createElement('div');
+                item.className = 'item';
+                var occurrenceRate = totalOccurrences !== 0 ? (items[i].count / totalOccurrences * 100).toFixed(2) : 0;
+                item.innerText = items[i].name + "";
+                item.dataset.index = i;
+                item.addEventListener('click', function(event) {
+                    var index = event.target.dataset.index;
+                    items.splice(index, 1); // Öğeyi listeden kaldırın
+                    displayItems();
+                });
+                wheel.appendChild(item);
+            }
+        }
+
+        spinButton.addEventListener('click', function() {
+            if (items.length > 0) {
+                var totalOccurrences = 0;
+                for (var i = 0; i < items.length; i++) {
+                    totalOccurrences += items[i].count;
+                }
+                var randomIndex = Math.floor(Math.random() * items.length);
+                var selectedItem = items[randomIndex];
+                selectedItem.count++;
+                var occurrenceRate = totalOccurrences !== 0 ? ((selectedItem.count - 1) / totalOccurrences * 100).toFixed(2) : 0;
+                resultDiv.innerText = "Seçilen öğe: " + selectedItem.name + "";
+
+                if (document.getElementById('removeOnSpin').checked) {
+                    items.splice(randomIndex, 1); // Doğru indeksi kullanarak öğeyi kaldırın
+                    displayItems();
+                }
+            } else {
+                resultDiv.innerText = "Öğe bulunmuyor.";
+            }
+        });
+
+        // İlk öğeleri görüntüleyin
+        displayItems();
+    </script>
+  <script src="script.js"></script>
+<script src="footer.js"></script>
+<footer id="transparentFooter">
+    <p class="footerText">
+ <link rel="stylesheet" href="footer.css">
+      Made by <a href="https://github.com/QuarkDevelopmentt" id="link1">Quark Development</a> with &lt;3. Open-source on <a href="https://github.com/Stormysx/xox-game" id="link2">GitHub</a>.
+    </p>
+  </footer>
+</body>
+</html>
